@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grand Plaza Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ================= PRELOADER CSS ================= */
+        #preloader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: #0f172a; z-index: 99999;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: opacity 0.8s ease-out, visibility 0.8s;
+        }
+        #preloader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .loader-content img { width: 250px; margin-bottom: 30px; animation: logoPulse 2s infinite ease-in-out; }
+        .loader-ring {
+            width: 50px; height: 50px; margin: 0 auto;
+            border: 4px solid rgba(255, 215, 0, 0.2); border-top: 4px solid gold;
+            border-radius: 50%; animation: spin 1s linear infinite;
+        }
+        .welcome-text { animation: fadeInUp 1s ease-out; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes logoPulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.05); opacity: 0.85; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div id="preloader">
+    <div class="loader-content" style="text-align: center;">
+        <img src="Hotel Grand Plaza Logo.png" alt="Admin Loading">
+        <div class="loader-ring"></div>
+        <h2 class="welcome-text" style="color: #D4AF37; margin-top: 25px; font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; letter-spacing: 1px;">
+            Welcome To Admin Panel
+        </h2>
+    </div>
+</div>
+
+<div class="login-box" id="loginBox">
+    <div style="text-align: center; margin-bottom: 10px;">
+        <img src="Hotel Grand Plaza Logo.png" alt="Grand Plaza Logo" style="width: 140px; margin-bottom: 5px;">
+    </div>
+    <h2>Admin Panel</h2>
+    
+    <div id="loginFields">
+        <input type="text" id="adminUser" placeholder="Username">
+        <input type="password" id="adminPass" placeholder="Password">
+        <button onclick="login()">Login</button>
+        <div style="margin-top: 15px; font-size: 13px; display: flex; justify-content: center;">
+            <a href="#" onclick="toggleView('reset')" style="color: red; text-decoration: none;">Forgot Password?</a>
+        </div>
+    </div>
+
+    <div id="resetFields" class="hidden">
+        <p style="color: #cbd5e1; margin-bottom: 10px; font-size: 14px;">Reset Password</p>
+        <input type="text" id="resetUser" placeholder="Confirm Username">
+        <input type="password" id="newAdminPass" placeholder="New Password">
+        <button onclick="updatePassword()" style="background: #f59e0b; color: black;">Reset & Login</button>
+        <p style="margin-top: 15px;"><a href="#" onclick="toggleView('login')" style="color: #94a3b8; text-decoration: none; font-size: 13px;">Back to Login</a></p>
+    </div>
+</div>
+
+<div class="dashboard hidden" id="dashboard">
+    <nav class="topbar">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="Hotel Grand Plaza Logo.png" alt="Logo" style="height: 40px; object-fit: contain;">
+            <h2 style="margin: 0;">Admin Dashboard</h2>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <span id="activeUserDisplay" style="color: gold; font-weight: bold; background: #1e293b; padding: 5px 15px; border-radius: 20px; border: 1px solid #334155;">
+                <i class="fas fa-user-circle"></i> Welcome
+            </span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="stats">
+        <div class="card">
+            <i class="fas fa-calendar-check"></i>
+            <div><p>Total Bookings</p><h3 id="totalBookings">0</h3></div>
+        </div>
+        <div class="card">
+            <i class="fas fa-indian-rupee-sign"></i>
+            <div><p>Total Revenue</p><h3>₹<span id="totalRevenue">0</span></h3></div>
+        </div>
+    </div>
+
+    <div class="table-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3>All Bookings</h3>
+            <button onclick="openBookingForm()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700;"><i class="fas fa-plus"></i> Add Booking</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Name</th><th>Email</th><th>Mobile</th>
+                    <th>Check-In</th><th>Check-Out</th><th>Type</th>
+                    <th>Item</th><th>Guests</th><th>Amount</th><th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="bookingTable"></tbody>
+        </table>
+        <button class="danger" onclick="clearAll()" style="margin-top: 10px;"><i class="fas fa-trash"></i> Clear All Bookings</button>
+    </div>
+
+    <!-- Booking Modal Form -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Booking</h3>
+            </div>
+            <button onclick="closeBookingForm()" class="modal-close"><i class="fas fa-times"></i></button>
+            <form id="bookingForm" onsubmit="saveBooking(event)">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="customerName" placeholder="Full Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email *</label>
+                    <input type="email" id="customerEmail" placeholder="Email" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Phone *</label>
+                    <input type="tel" id="customerPhone" placeholder="Phone Number" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Type *</label>
+                    <select id="bookingType" required onchange="updateItemOptions()">
+                        <option value="">Select Type</option>
+                        <option value="Room">Room</option>
+                        <option value="Hall">Hall</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Item Name *</label>
+                    <select id="itemName" required onchange="calculateAdminPrice()">
+                        <option value="">Select Item</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Check-In Date *</label>
+                        <input type="date" id="checkIn" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Check-Out Date *</label>
+                        <input type="date" id="checkOut" required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="eventTimeGroup" style="display: none;">
+                    <label>Event Time *</label>
+                    <input type="time" id="eventTime" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="guests">Number of Guests *</label>
+                    <input type="number" id="guests" min="1" placeholder="1" required>
+                </div>
+
+                <!-- Keep the numeric total hidden (used for storage/validation), show styled summary like main site -->
+                <div class="form-group" style="display:none;">
+                    <label>Total Amount (₹) *</label>
+                    <input type="number" id="totalAmount" step="0.01" min="0" placeholder="Amount will auto-calculate" readonly>
+                </div>
+
+                <div class="price-summary">
+                    <div class="price-row">
+                        <span>Total:</span>
+                        <span class="price-amount" id="admin-total-price">₹0</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem;">
+                    <button type="button" onclick="closeBookingForm()" style="background: transparent; border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 0.875rem 1.5rem; border-radius: 10px; cursor: pointer; font-weight: 600;">Cancel</button>
+                    <button type="submit" style="background: #D4AF37; color: #0a0e13; padding: 0.875rem 1.5rem; border: none; border-radius: 10px; cursor: pointer; font-weight: 700;">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase Module Script -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-analytics.js";
+    import { getDatabase, ref, set, get, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyALFXaA521YaigaJ9J2Vx270nkvbctgyzI",
+        authDomain: "hotel-grand-plaza-db.firebaseapp.com",
+        databaseURL: "https://hotel-grand-plaza-db-default-rtdb.firebaseio.com",
+        projectId: "hotel-grand-plaza-db",
+        storageBucket: "hotel-grand-plaza-db.firebasestorage.app",
+        messagingSenderId: "318765519849",
+        appId: "1:318765519849:web:6675205f6e49a4228fb178",
+        measurementId: "G-S3LF56444M"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+
+    // Initialize Firebase services
+    const database = getDatabase(app);
+    const auth = getAuth(app);
+
+    // Make Firebase services available globally
+    window.firebaseServices = {
+        database,
+        ref,
+        set,
+        get,
+        push,
+        onValue,
+        update,
+        remove,
+        auth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+        onAuthStateChanged
+    };
+
+    console.log('Firebase initialized successfully on admin panel!');
+    
+    // Dispatch event when Firebase is ready
+    window.dispatchEvent(new Event('firebaseReady'));
+</script>
+
+<script src="admin.js"></script>
+
+<script>
+    window.addEventListener("load", function() {
+        if (!sessionStorage.getItem('adminPanelAnimationPlayed')) {
+            setTimeout(function() {
+                document.getElementById("preloader").classList.add("hidden");
+                sessionStorage.setItem('adminPanelAnimationPlayed', 'true');
+            }, 2500); 
+        } else {
+            document.getElementById("preloader").style.display = "none";
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,368 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: #0f172a;
+    color: white;
+}
+
+/* ================= LOGIN ================= */
+.login-box {
+    max-width: 360px;
+    margin: 120px auto;
+    background: #1e293b;
+    padding: 30px;
+    border-radius: 14px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+
+    /* TEXT */
+    font-weight: 700;
+
+    /* ANIMATION */
+    animation: fadeSlideIn 0.8s ease forwards;
+}
+
+.login-box * {
+    font-weight: 700;
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: none;
+    outline: none;
+    font-weight: 700;
+    transition: box-shadow 0.3s ease;
+}
+
+.login-box input:focus {
+    box-shadow: 0 0 0 2px gold;
+}
+
+.login-box input::placeholder {
+    font-weight: 700;
+    color: #64748b;
+}
+
+.login-box button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: gold;
+    border: none;
+    font-weight: 800;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-box button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255,215,0,0.4);
+}
+
+.hint {
+    font-size: 13px;
+    color: #cbd5f5;
+    margin-top: 12px;
+    line-height: 1.5;
+}
+
+/* ================= HIDE / SHOW ================= */
+.hidden {
+    display: none !important;
+}
+
+/* ================= DASHBOARD ANIMATION ================= */
+.dashboard {
+    animation: fadeIn 0.5s ease forwards;
+}
+
+/* ================= TOPBAR ================= */
+.topbar {
+    background: linear-gradient(135deg,#1e3a8a,#2563eb);
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-btn {
+    background: crimson;
+    border: none;
+    padding: 8px 14px;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.logout-btn:hover {
+    transform: scale(1.05);
+}
+
+/* ================= STATS ================= */
+.stats {
+    display: flex;
+    gap: 20px;
+    padding: 25px;
+}
+
+.card {
+    flex: 1;
+    background: #1e293b;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.card i {
+    font-size: 28px;
+    color: gold;
+}
+
+/* ================= TABLE ================= */
+.table-box {
+    padding: 20px 30px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    background: #2563eb;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+tr:nth-child(even) {
+    background: #263449;
+}
+
+button {
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.danger {
+    margin: 20px 30px;
+    background: crimson;
+    color: white;
+    border: none;
+    padding: 12px;
+}
+
+/* ================= MODAL ================= */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: #1f2630;
+    border-radius: 20px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 2.5rem;
+    position: relative;
+    animation: slideUp 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1.5rem;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #D4AF37;
+    font-size: 2rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: rotate(90deg);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #e8eaed;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.875rem 1.25rem;
+    background: #151922;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: #e8eaed;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #D4AF37;
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.1);
+}
+
+.form-group input::placeholder {
+    color: #9aa0a6;
+}
+
+/* Date/time inputs in admin modal: wider length, same height as other inputs */
+#bookingModal .form-row .form-group input[type="date"],
+#bookingModal .form-row .form-group input[type="time"] {
+    max-width: 360px; /* increase length */
+    width: 100%;
+    padding: 0.875rem 1.25rem; /* same vertical size as other inputs */
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+/* Make sure date inputs align nicely on small screens */
+@media (max-width: 640px) {
+    #bookingModal .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    #bookingModal .form-row .form-group input[type="date"],
+    #bookingModal .form-row .form-group input[type="time"] {
+        max-width: 100%;
+    }
+}
+
+.price-summary {
+    background: #151922;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.25rem;
+    color: #e8eaed;
+}
+
+.price-amount {
+    color: #D4AF37;
+    font-weight: 700;
+    font-size: 1.75rem;
+}
+
+/* ================= ANIMATIONS ================= */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
