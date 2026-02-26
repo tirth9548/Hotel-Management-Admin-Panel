@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- jsPDF Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
     
     <style>
         /* ================= PRELOADER CSS ================= */
@@ -106,7 +109,10 @@
             </thead>
             <tbody id="bookingTable"></tbody>
         </table>
-        <button class="danger" onclick="clearAll()" style="margin-top: 10px;"><i class="fas fa-trash"></i> Clear All Bookings</button>
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="danger" onclick="clearAll()"><i class="fas fa-trash"></i> Clear All Bookings</button>
+            <button onclick="downloadCustomerdetailsPDF()" class="danger"><i class="fas fa-file-pdf"></i> Download Customer Details PDF</button>
+        </div>
     </div>
 
     <!-- Booking Modal Form -->
