@@ -360,7 +360,7 @@ function updatePriceSummary() {
     const checkIn = document.getElementById("checkIn").value;
     const checkOut = document.getElementById("checkOut").value;
 
-    let summaryHtml = `<div class="price-row"><span>Total:</span><span class="price-amount">₹${totalAmount.toLocaleString('en-IN')}</span></div>`;
+    let summaryHtml = `<div class="price-row"><span>Total:</span><span class="price-amount">Rs. ${totalAmount.toLocaleString('en-IN')}</span></div>`;
     if (bookingType === "Room" && checkIn && checkOut) {
         const nights = calculateNights(checkIn, checkOut);
         summaryHtml += `<div style="color: #9aa0a6; margin-top: 0.5rem; font-size: 0.9rem;">Duration: ${nights} night${nights > 1 ? 's' : ''}</div>`;
@@ -493,6 +493,140 @@ function logout() {
     sessionStorage.removeItem("adminUser");
     sessionStorage.removeItem("primaryAdminVerified");
     location.reload();
+}
+
+// Helper function to load image as base64 for PDF watermark
+function loadImageAsBase64(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const dataUrl = canvas.toDataURL('image/png');
+            resolve(dataUrl);
+        };
+        img.onerror = function() {
+            reject(new Error('Failed to load image'));
+        };
+        img.src = url;
+    });
+}
+
+// 7. DOWNLOAD CUSTOMER PDF
+async function downloadCustomerdetailsPDF() {
+    if (adminBookings.length === 0) {
+        alert("No bookings available to download!");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    const hotelName = "HOTEL GRAND PLAZA";
+    const hotelAddress = "Hotel Grand Plaza, Ahmedabad";
+    const hotelPhone = "+91 98765 43210";
+    const hotelEmail = "hotegrandplaza@gamil.com";
+
+    // Add logo image to header (left side, above orange line)
+    try {
+        const logoUrl = "Hotel Grand Plaza Logo.png";
+        const logoImg = await loadImageAsBase64(logoUrl);
+        doc.addImage(logoImg, 'PNG', 15, 8, 28, 28, undefined, 'FAST');
+    } catch (e) {
+        console.log("Could not load logo:", e);
+    }
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(24);
+    doc.setFont("helvetica", "bold");
+    doc.text(hotelName, 105, 20, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.text(hotelAddress, 105, 28, { align: "center" });
+    doc.text("Phone: " + hotelPhone + " | Email: " + hotelEmail, 105, 34, { align: "center" });
+
+    doc.setDrawColor(212, 175, 55);
+    doc.setLineWidth(0.5);
+    doc.line(20, 40, 190, 40);
+
+    doc.setFontSize(16);
+    doc.setFont("helvetica", "bold");
+    doc.text("Customer Booking Details Report", 105, 50, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    var currentDate = new Date().toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' });
+    doc.text("Generated on: " + currentDate, 105, 58, { align: "center" });
+
+    doc.setFontSize(11);
+    doc.text("Total Bookings: " + adminBookings.length, 20, 68);
+    var totalRevenue = adminBookings.reduce(function(sum, b) { return sum + parseFloat(b.totalAmount || 0); }, 0);
+    doc.text("Total Revenue: Rs." + totalRevenue.toLocaleString('en-IN'), 20, 75);
+
+    var tableData = adminBookings.map(function(b, index) {
+        return [
+            index + 1,
+            b.customerName || '-',
+            b.customerEmail || '-',
+            b.customerPhone || '-',
+            formatDate(b.checkIn),
+            formatDate(b.checkOut),
+            b.type || '-',
+            b.itemName || '-',
+            b.guests || '-',
+            "Rs." + parseFloat(b.totalAmount || 0).toLocaleString('en-IN')
+        ];
+    });
+
+    doc.autoTable({
+        startY: 82,
+        head: [['#', 'Name', 'Email', 'Phone', 'Check-In', 'Check-Out', 'Type', 'Item', 'Guests', 'Amount']],
+        body: tableData,
+        theme: 'grid',
+        headStyles: {
+            fillColor: [184, 134, 11],
+            textColor: [255, 255, 255],
+            fontStyle: 'bold',
+            fontSize: 9
+        },
+        bodyStyles: {
+            fontSize: 8
+        },
+        alternateRowStyles: {
+            fillColor: [245, 245, 245]
+        },
+        columnStyles: {
+            0: { cellWidth: 10 },
+            1: { cellWidth: 25 },
+            2: { cellWidth: 35 },
+            3: { cellWidth: 22 },
+            4: { cellWidth: 18 },
+            5: { cellWidth: 18 },
+            6: { cellWidth: 12 },
+            7: { cellWidth: 25 },
+            8: { cellWidth: 12 },
+            9: { cellWidth: 20 }
+        },
+        margin: { left: 10, right: 10 }
+    });
+
+    var pageCount = doc.internal.getNumberOfPages();
+    
+    // Add footer to each page
+    for(var i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(128, 128, 128);
+        doc.text("Page " + i + " of " + pageCount, 105, 290, { align: "center" });
+        doc.text("Hotel Grand Plaza - Luxury Redefined", 105, 295, { align: "center" });
+    }
+
+    doc.save("Hotel_Grand_Plaza_Customers_" + new Date().toISOString().split('T')[0] + ".pdf");
 }
 
 function toggleView(v) {
