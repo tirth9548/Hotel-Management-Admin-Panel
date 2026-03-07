@@ -150,6 +150,23 @@ function renderBookingsTable(bookings) {
     document.getElementById("totalRevenue").innerText = revenue;
 }
 
+// Search bookings by customer name
+function searchBookings() {
+    const searchInput = document.getElementById("searchBookings");
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    
+    if (searchTerm === "") {
+        // If search is empty, show all bookings
+        renderBookingsTable(adminBookings);
+    } else {
+        // Filter bookings by customer name
+        const filteredBookings = adminBookings.filter(booking => {
+            return booking.customerName && booking.customerName.toLowerCase().includes(searchTerm);
+        });
+        renderBookingsTable(filteredBookings);
+    }
+}
+
 // 5. DELETE BOOKING - Firebase
 function deleteBooking(bookingId) {
     if(confirm("Delete this booking?")) {
