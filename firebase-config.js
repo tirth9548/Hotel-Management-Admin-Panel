@@ -45,4 +45,3 @@ window.firebaseServices = {
 };
 
 console.log('Firebase initialized successfully!');
-
