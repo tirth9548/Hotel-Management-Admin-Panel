@@ -115,6 +115,18 @@ function renderBookingsTable(bookings) {
 
     bookings.forEach((b, i) => {
         revenue += parseFloat(b.totalAmount || 0);
+        
+        // Determine payment status
+        let paymentStatus = 'Pending';
+        let statusColor = '#f59e0b'; // orange/yellow for pending
+        if (b.paymentMethod === 'Online Payment' || b.paymentStatus === 'paid') {
+            paymentStatus = 'Paid';
+            statusColor = '#10b981'; // green for paid
+        } else if (b.paymentMethod === 'Pay At Hotel' || b.paymentStatus === 'pay_at_hotel') {
+            paymentStatus = 'Pending';
+            statusColor = '#f59e0b';
+        }
+        
         bookingTable.innerHTML += `
             <tr>
                 <td>${b.id || '-'}</td>
@@ -127,6 +139,7 @@ function renderBookingsTable(bookings) {
                 <td>${b.itemName}</td>
                 <td>${b.guests}</td>
                 <td>₹${b.totalAmount}</td>
+                <td><span style="background:${statusColor}; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">${paymentStatus}</span></td>
                 <td>
                     <button onclick="editBooking('${b.id}')" style="background:#3b82f6; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-right: 5px;">Edit</button>
                     <button onclick="deleteBooking('${b.id}')" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Delete</button>
@@ -569,6 +582,14 @@ async function downloadCustomerdetailsPDF() {
     doc.text("Total Revenue: Rs." + totalRevenue.toLocaleString('en-IN'), 20, 75);
 
     var tableData = adminBookings.map(function(b, index) {
+        // Determine payment status
+        let paymentStatus = 'Pending';
+        if (b.paymentMethod === 'Online Payment' || b.paymentStatus === 'paid') {
+            paymentStatus = 'Paid';
+        } else if (b.paymentMethod === 'Pay At Hotel' || b.paymentStatus === 'pay_at_hotel') {
+            paymentStatus = 'Pending';
+        }
+        
         return [
             index + 1,
             b.customerName || '-',
@@ -579,40 +600,43 @@ async function downloadCustomerdetailsPDF() {
             b.type || '-',
             b.itemName || '-',
             b.guests || '-',
-            "Rs." + parseFloat(b.totalAmount || 0).toLocaleString('en-IN')
+            "Rs." + parseFloat(b.totalAmount || 0).toLocaleString('en-IN'),
+            paymentStatus
         ];
     });
 
     doc.autoTable({
         startY: 82,
-        head: [['#', 'Name', 'Email', 'Phone', 'Check-In', 'Check-Out', 'Type', 'Item', 'Guests', 'Amount']],
+        head: [['#', 'Name', 'Email', 'Phone', 'Check-In', 'Check-Out', 'Type', 'Item', 'Guests', 'Amount', 'Payment Status']],
         body: tableData,
         theme: 'grid',
         headStyles: {
             fillColor: [184, 134, 11],
             textColor: [255, 255, 255],
             fontStyle: 'bold',
-            fontSize: 9
+            fontSize: 8
         },
         bodyStyles: {
-            fontSize: 8
+            fontSize: 7
         },
         alternateRowStyles: {
             fillColor: [245, 245, 245]
         },
         columnStyles: {
-            0: { cellWidth: 10 },
-            1: { cellWidth: 25 },
-            2: { cellWidth: 35 },
-            3: { cellWidth: 22 },
-            4: { cellWidth: 18 },
-            5: { cellWidth: 18 },
-            6: { cellWidth: 12 },
-            7: { cellWidth: 25 },
-            8: { cellWidth: 12 },
-            9: { cellWidth: 20 }
+            0: { cellWidth: 8 },
+            1: { cellWidth: 22 },
+            2: { cellWidth: 30 },
+            3: { cellWidth: 20 },
+            4: { cellWidth: 16 },
+            5: { cellWidth: 16 },
+            6: { cellWidth: 10 },
+            7: { cellWidth: 22 },
+            8: { cellWidth: 10 },
+            9: { cellWidth: 18 },
+            10: { cellWidth: 25 }
         },
-        margin: { left: 10, right: 10 }
+        margin: { left: 8, right: 8 },
+        tableWidth: 'auto'
     });
 
     var pageCount = doc.internal.getNumberOfPages();
