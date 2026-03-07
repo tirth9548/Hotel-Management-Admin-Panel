@@ -97,7 +97,13 @@
     <div class="table-box">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h3>All Bookings</h3>
-            <button onclick="openBookingForm()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700;"><i class="fas fa-plus"></i> Add Booking</button>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchBookings" placeholder="Search by customer name..." onkeyup="searchBookings()">
+                </div>
+                <button onclick="openBookingForm()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 700;"><i class="fas fa-plus"></i> Add Booking</button>
+            </div>
         </div>
         <table>
             <thead>
