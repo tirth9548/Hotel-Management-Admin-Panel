@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="admin-manifest.json">
     <title>Grand Plaza Admin Panel</title>
     <link rel="stylesheet" href="admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -70,12 +71,13 @@
 </div>
 
 <div class="dashboard hidden" id="dashboard">
-    <nav class="topbar">
+<nav class="topbar">
         <div style="display: flex; align-items: center; gap: 15px;">
             <img src="Hotel Grand Plaza Logo.png" alt="Logo" style="height: 40px; object-fit: contain;">
             <h2 style="margin: 0;">Admin Dashboard</h2>
         </div>
         <div style="display: flex; align-items: center; gap: 20px;">
+
             <span id="activeUserDisplay" style="color: gold; font-weight: bold; background: #1e293b; padding: 5px 15px; border-radius: 20px; border: 1px solid #334155;">
                 <i class="fas fa-user-circle"></i> Welcome
             </span>
@@ -253,19 +255,21 @@
     window.dispatchEvent(new Event('firebaseReady'));
 </script>
 
-<script src="admin.js"></script>
+    <script src="admin.js"></script>
+    
 
-<script>
-    window.addEventListener("load", function() {
-        if (!sessionStorage.getItem('adminPanelAnimationPlayed')) {
-            setTimeout(function() {
-                document.getElementById("preloader").classList.add("hidden");
-                sessionStorage.setItem('adminPanelAnimationPlayed', 'true');
-            }, 2500); 
-        } else {
-            document.getElementById("preloader").style.display = "none";
-        }
-    });
-</script>
+
+    <script>
+        window.addEventListener("load", function() {
+            if (!sessionStorage.getItem('adminPanelAnimationPlayed')) {
+                setTimeout(function() {
+                    document.getElementById("preloader").classList.add("hidden");
+                    sessionStorage.setItem('adminPanelAnimationPlayed', 'true');
+                }, 2500); 
+            } else {
+                document.getElementById("preloader").style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>
