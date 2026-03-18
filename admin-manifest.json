@@ -1,0 +1,23 @@
+{
+  "name": "Grand Plaza Admin",
+  "short_name": "Admin",
+  "description": "Hotel Grand Plaza Admin Panel - Manage bookings and users",
+  "start_url": "./admin.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2C5F7C",
+  "icons": [
+    {
+      "src": "Hotel Grand Plaza Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "Hotel Grand Plaza Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
