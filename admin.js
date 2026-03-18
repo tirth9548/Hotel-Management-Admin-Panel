@@ -527,22 +527,27 @@ function logout() {
 
 // Helper function to load image as base64 for PDF watermark
 function loadImageAsBase64(url) {
+    console.log('Loading logo from:', url);
     return new Promise((resolve, reject) => {
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = function() {
+            console.log('Logo loaded successfully, dimensions:', img.width + 'x' + img.height);
             const canvas = document.createElement('canvas');
             canvas.width = img.width;
             canvas.height = img.height;
             const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
             ctx.drawImage(img, 0, 0);
-            const dataUrl = canvas.toDataURL('image/png');
+            const dataUrl = canvas.toDataURL('image/png', 0.9);
+            console.log('Base64 data length:', dataUrl.length);
             resolve(dataUrl);
         };
-        img.onerror = function() {
-            reject(new Error('Failed to load image'));
+        img.onerror = function(e) {
+            console.error('Logo load failed:', e, 'URL:', url);
+            reject(new Error('Failed to load logo image: ' + url));
         };
-        img.src = url;
+        img.src = url + '?t=' + Date.now(); // Cache bust
     });
 }
 
@@ -561,13 +566,21 @@ async function downloadCustomerdetailsPDF() {
     const hotelPhone = "+91 98765 43210";
     const hotelEmail = "hotegrandplaza@gamil.com";
 
-    // Add logo image to header (left side, above orange line)
+// Add logo image to header (upper left corner near hotel details)
     try {
         const logoUrl = "Hotel Grand Plaza Logo.png";
         const logoImg = await loadImageAsBase64(logoUrl);
-        doc.addImage(logoImg, 'PNG', 15, 8, 28, 28, undefined, 'FAST');
+        doc.addImage(logoImg, 'PNG', 15, 8, 30, 30, undefined, 'SLOW');
+        console.log('Logo added to PDF successfully');
     } catch (e) {
-        console.log("Could not load logo:", e);
+        console.error('Failed to add logo to PDF:', e);
+        // Fallback: Add text logo
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.setTextColor(212, 175, 55);
+        doc.text("HOTEL GRAND", 15, 20);
+        doc.setFontSize(8);
+        doc.text("PLAZA", 15, 28);
     }
 
     doc.setTextColor(0, 0, 0);
